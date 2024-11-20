@@ -11,7 +11,7 @@ class ScrapenewsItem(scrapy.Item):
     # name = scrapy.Field()
     pass
 
-class ArticleKlan(scrapy.Item):
+class ArticleKlanItem(scrapy.Item):
     article_title = scrapy.Field()
     article_link = scrapy.Field()
     article_description = scrapy.Field()
