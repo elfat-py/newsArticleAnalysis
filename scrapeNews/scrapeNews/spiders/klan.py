@@ -30,7 +30,6 @@ class KlanSpider(scrapy.Spider):
         title = response.css('.post-title-wrapper h1.post-title::text').get()
         # Extract publish time
         publish_time = response.css('.published-time::text').get()
-
         # Extract main content paragraphs
         content_paragraphs = response.css('.post-content p::text').getall()
         content = ' '.join(content_paragraphs)

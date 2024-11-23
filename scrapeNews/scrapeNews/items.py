@@ -19,3 +19,13 @@ class ArticleKlanItem(scrapy.Item):
     category = scrapy.Field()
     article_body = scrapy.Field()
     image_url = scrapy.Field()
+
+
+class ArticleRtshItem(scrapy.Item):
+    title = scrapy.Field()
+    link = scrapy.Field()
+    description = scrapy.Field()
+    time_of_post = scrapy.Field()
+    category = scrapy.Field()
+    content = scrapy.Field()
+    image_url = scrapy.Field()

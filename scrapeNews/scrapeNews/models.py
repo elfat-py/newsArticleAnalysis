@@ -20,5 +20,17 @@ class ArticleKlan(Base):
     article_body = Column(Text)
     image_url = Column(String(255))
 
+class ArticleRtsh(Base):
+    __tablename__ = 'articles_rtsh'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)  # Unique identifier
+    article_title = Column(String(255), unique=True)  # No autoincrement for primary key (title is unique)
+    article_link = Column(String(255))
+    article_description = Column(Text)
+    time_of_post = Column(String(50))
+    category = Column(String(100))
+    article_body = Column(Text)
+    image_url = Column(String(255))
+
 # Ensure the table is created
 Base.metadata.create_all(engine)
