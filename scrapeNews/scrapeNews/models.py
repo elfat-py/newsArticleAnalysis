@@ -5,7 +5,7 @@ from sqlalchemy.ext.declarative import declarative_base
 Base = declarative_base()
 
 # Database engine
-engine = create_engine('mysql+mysqlconnector://root:elgert1234@localhost:3307/news_db', echo=True)
+engine = create_engine('mysql+mysqlconnector://root:rootkeris@localhost:3306/news_db', echo=True)
 
 # Define the Article model
 class ArticleKlan(Base):

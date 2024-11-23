@@ -64,7 +64,7 @@ ROBOTSTXT_OBEY = True
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
    # "scrapeNews.pipelines.ScrapenewsPipeline": 300,
-    "scrapeNews.pipelines.MySQLPipeline": 400,
+   #  "scrapeNews.pipelines.MySQLPipeline": 400,
 
 }
 
