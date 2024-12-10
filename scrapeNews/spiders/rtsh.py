@@ -1,6 +1,6 @@
 import scrapy
 from scrapeNews.items import ArticleRtshItem
-
+import re
 
 class RtshSpider(scrapy.Spider):
     name = 'rtsh'
@@ -12,7 +12,7 @@ class RtshSpider(scrapy.Spider):
         'DOWNLOAD_DELAY': 1,  # Prevent overloading the server
         'AUTOTHROTTLE_ENABLED': True,
         'AUTOTHROTTLE_START_DELAY': 1,
-        'AUTOTHROTTLE_MAX_DELAY': 10,
+        'AUTOTHROTTLE_MAX_DELAY': 10   ,
         'ROBOTSTXT_OBEY': False,  # Ignore robots.txt
     }
 
@@ -42,10 +42,15 @@ class RtshSpider(scrapy.Spider):
                 )
 
     def parse_article(self, response):
-        # Extract fields with fallback defaults
-        time_raw = response.css(".col-lg-8 p::text").get()
-        time_cleaned = time_raw.strip() if time_raw else "Not specified"
+        # Extract and clean time
+        time_raw = response.css(".row > .col-lg-8 > p").get()
+        if time_raw:
+            match = re.search(r'\d{2}/\d{2}/\d{4}', time_raw)
+            time_cleaned = match.group(0) if match else "Not specified"
+        else:
+            time_cleaned = "Not specified"
 
+        # Extract other fields
         content = response.css(".article-content").get()
         title = response.css(".c-black::text").get() or "No title available"
         category = response.css(".category::text").get() or "Uncategorized"
@@ -55,20 +60,10 @@ class RtshSpider(scrapy.Spider):
         item = ArticleRtshItem()
         item['article_title'] = title
         item['article_link'] = response.url
-        item['article_description'] = ''  # Provide a default description if not needed
-        item['time_of_post'] = time_cleaned
+        item['time_of_post'] = time_cleaned  # Use cleaned time
         item['category'] = category
         item['article_body'] = content or "No content available"
         item['image_url'] = image
-
-        # Log what is being scraped
-        # self.logger.info(f"Scraped article: {item['article_title']}")
+        item['channel'] = 'RTSH'
 
         yield item
-
-        #
-        # yield {
-        #     'time': time_cleaned,
-        #     'content': content,
-        #     'title': title,
-        # }

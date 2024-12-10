@@ -1,5 +1,4 @@
 import scrapy
-
 from scrapeNews.items import TopChannelItem
 
 
@@ -13,28 +12,22 @@ class TopchannelSpider(scrapy.Spider):
         categoryList = ['#newsMenu1', '#newsMenu2']
 
         for category in categoryList:
-            # Extract all links for the category
             categoryLinks = response.css(f"{category} .menu-item > a::attr(href)").getall()
 
             for link in categoryLinks:
-                # Use response.follow to handle relative and absolute URLs automatically
                 yield scrapy.Request(link, callback=self.parse_category)
 
     def parse_category(self, response):
-        # Use XPath to exclude articles inside `<aside>`
         main = response.css('#main')
-        print(f"Category URL: {response.url}")
         articles = main.css('.article > a::attr(href)').getall()
 
         for article_link in articles:
             print(f"Article Link: {article_link}")
-            # If you want to follow the article links, uncomment the line below:
             yield scrapy.Request(article_link, callback=self.parse_article)
 
     def parse_article(self, article):
         title = article.css("div.title h1::text").get()
         categories = article.css("div.categories a::text").getall()
-        publication_date = article.css("div.date::text").get().strip()
         content = " ".join(article.css("div.articleContent p::text").getall())
         image_url = article.css("div.featuredImageContainer img::attr(src)").get()
 
@@ -42,8 +35,8 @@ class TopchannelSpider(scrapy.Spider):
         item["article_title"] = title
         item["article_link"] = article.url
         item["category"] = categories
-        item["time_of_post"] = publication_date
         item["article_body"] = content
         item["image_url"] = image_url
+        item['channel'] = 'TOP Channel'
 
         yield item

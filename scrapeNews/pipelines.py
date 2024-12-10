@@ -1,5 +1,5 @@
 from scrapeNews.items import ArticleKlanItem, ArticleRtshItem, TopChannelItem
-from scrapeNews.models import ArticleKlan, ArticleRtsh, engine, ArticleTopChannel
+from scrapeNews.models import engine, Articles
 from sqlalchemy.orm import sessionmaker
 
 
@@ -22,74 +22,82 @@ class MySQLPipeline:
         if hasattr(self, "session"):
             self.session.close()
 
+    def get_time_of_post(self, url):
+        """
+        Extract the time of post from the URL
+        :param url:
+        :return:
+        """
+        if not url:
+            return ''  # Return an empty string if the URL is missing
+        parts = url.split('/')
+        if len(parts) >= 5:
+            return '/'.join(parts[3:6])  # Join the year, month, and day
+        return ''  # Return an empty string if the URL structure is invalid
+
     def process_item(self, item, spider):
         try:
             if isinstance(item, ArticleKlanItem):
                 spider.logger.info(f"Processing Klan article: {item['article_title']}")
 
                 existing_article = (
-                    self.session.query(ArticleKlan)
+                    self.session.query(Articles)
                     .filter_by(article_title=item['article_title'])
                     .first()
                 )
                 if not existing_article:
-                    article = ArticleKlan(
+
+                    article = Articles(
                         article_title=item['article_title'],
                         article_link=item['article_link'],
-                        article_description=item.get('article_description', ''),
                         time_of_post=item.get('time_of_post', ''),
                         category=item.get('category', ''),
                         article_body=item.get('article_body', ''),
                         image_url=item.get('image_url', ''),
+                        channel=item.get('channel', '')
                     )
                     self.session.add(article)
                     self.session.commit()
                 return item
 
             elif isinstance(item, ArticleRtshItem):
-                spider.logger.info(f"Processing RTSH article: {item['article_title']}")
-
                 existing_article = (
-                    self.session.query(ArticleRtsh)
+                    self.session.query(Articles)
                     .filter_by(article_title=item['article_title'])
                     .first()
                 )
                 if not existing_article:
-                    article = ArticleRtsh(
+                    article = Articles(
                         article_title=item['article_title'],
                         article_link=item['article_link'],
-                        article_description=item.get('article_description', ''),
                         time_of_post=item.get('time_of_post', ''),
                         category=item.get('category', ''),
                         article_body=item.get('article_body', ''),
                         image_url=item.get('image_url', ''),
+                        channel=item.get('channel', ''),
                     )
                     self.session.add(article)
                     self.session.commit()
                 return item
 
             elif isinstance(item, TopChannelItem):
-                spider.logger.info(f"Processing Top Channel article: {item['article_title']}")
+                category = ', '.join(item.get('category', []))
+                time_of_post = self.get_time_of_post(item.get('article_link', ''))
 
-                # Convert category list to a comma-separated string
-                category = ', '.join(item.get('category', []))  # Default to an empty list if `category` is missing
-
-                # Check if the article already exists in the database
                 existing_article = (
-                    self.session.query(ArticleTopChannel)
+                    self.session.query(Articles)
                     .filter_by(article_title=item['article_title'])
                     .first()
                 )
                 if not existing_article:
-                    # Create a new ArticleTopChannel object and add it to the database
-                    article = ArticleTopChannel(
+                    article = Articles(
                         article_title=item['article_title'],
                         article_link=item['article_link'],
-                        article_description=item.get('article_description', ''),
-                        time_of_post=item.get('time_of_post', ''),
-                        category=category,  # Save the category as a string
+                        time_of_post=time_of_post,
+                        category=category,
                         article_body=item.get('article_body', ''),
                         image_url=item.get('image_url', ''),
+                        channel=item.get('channel', ''),
                     )
                     self.session.add(article)
                     self.session.commit()

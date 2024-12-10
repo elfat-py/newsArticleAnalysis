@@ -1,5 +1,4 @@
 import scrapy
-
 from scrapeNews.items import ArticleKlanItem
 
 
@@ -28,6 +27,7 @@ class KlanSpider(scrapy.Spider):
         category = response.meta['category']
         # Extract article title
         title = response.css('.post-title-wrapper h1.post-title::text').get()
+        image = response.css(".fit-img-wrapper img::attr(src)").get()
         # Extract publish time
         publish_time = response.css('.published-time::text').get()
         # Extract main content paragraphs
@@ -37,9 +37,9 @@ class KlanSpider(scrapy.Spider):
         item = ArticleKlanItem()
         item['article_title'] = title
         item['article_link'] = response.url
-        item['article_description'] = ''
         item['time_of_post'] = publish_time
         item['category'] = category
         item['article_body'] = content
-        item['image_url'] = ''
+        item['image_url'] = image
+        item['channel'] = 'Klan HD'
         yield item

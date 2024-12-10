@@ -64,7 +64,6 @@ COOKIES_ENABLED = True
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
     "scrapeNews.pipelines.MySQLPipeline": 400,
-
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
