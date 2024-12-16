@@ -25,12 +25,9 @@ class KlanSpider(scrapy.Spider):
 
     def parse_article(self, response):
         category = response.meta['category']
-        # Extract article title
         title = response.css('.post-title-wrapper h1.post-title::text').get()
         image = response.css(".fit-img-wrapper img::attr(src)").get()
-        # Extract publish time
         publish_time = response.css('.published-time::text').get()
-        # Extract main content paragraphs
         content_paragraphs = response.css('.post-content p::text').getall()
         content = ' '.join(content_paragraphs)
 

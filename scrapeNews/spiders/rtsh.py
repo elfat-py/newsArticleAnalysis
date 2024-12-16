@@ -2,6 +2,7 @@ import scrapy
 from scrapeNews.items import ArticleRtshItem
 import re
 
+
 class RtshSpider(scrapy.Spider):
     name = 'rtsh'
     allowed_domains = ['lajme.rtsh.al']
@@ -42,7 +43,7 @@ class RtshSpider(scrapy.Spider):
                 )
 
     def parse_article(self, response):
-        # Extract and clean time
+        # Extracts and clean time
         time_raw = response.css(".row > .col-lg-8 > p").get()
         if time_raw:
             match = re.search(r'\d{2}/\d{2}/\d{4}', time_raw)

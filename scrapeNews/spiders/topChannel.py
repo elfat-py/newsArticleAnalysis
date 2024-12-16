@@ -13,7 +13,6 @@ class TopchannelSpider(scrapy.Spider):
 
         for category in categoryList:
             categoryLinks = response.css(f"{category} .menu-item > a::attr(href)").getall()
-
             for link in categoryLinks:
                 yield scrapy.Request(link, callback=self.parse_category)
 
